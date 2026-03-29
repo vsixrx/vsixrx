@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v6</title>
+    <style>
+        :root {
+            /* ─── BIO Font Customizations ─── */
+            --bio-font: 'Space Mono', monospace;
+            /* Google Font: Space Mono */
+            --bio-size: 15px;
+            --bio-weight: 400;
+            --bio-style: normal;
+            --bio-color: rgba(255, 255, 255, 0.78);
+            --bio-spacing: 0px;
+
+            /* ─── QUOTE Font Customizations ─── */
+            --quote-font: 'Retro Gaming', sans-serif;
+            /* Google Font: Retro Gaming */
+            --quote-size: 11px;
+            --quote-weight: 400;
+            --quote-style: normal;
+            --quote-color: rgb(255, 255, 255);
+            --quote-spacing: 0.5px;
+
+            /* ─── COMPETITIVE BLOCK: Layout ─── */
+            --comp-block-width: 820px;
+            /* Match profile block width */
+            --comp-block-max-width: 2000px;
+            --comp-block-min-height: 200px;
+            --comp-block-max-height: 550px;
+            /* Set to 'none' for no max */
+            --comp-block-padding: 28px 24px;
+            --comp-block-border-radius: 0px;
+            --comp-block-gap: 12px;
+            --comp-block-background: rgba(0, 0, 0, 0);
+            --comp-block-border: 0px solid rgba(0, 0, 0, 0);
+            --comp-block-backdrop-blur: blur(10px);
+            --comp-block-opacity: 1;
+            --comp-block-top: 250px;
+            /* Vertical positioning */
+
+            /* ─── COMPETITIVE BLOCK: Header ─── */
+            --comp-header-font: 'OctoberCrow', sans-serif;
+            --comp-header-size: 30px;
+            --comp-header-weight: bold;
+            --comp-header-color: #fff;
+            --comp-header-spacing: 4px;
+            --comp-header-glow: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+
+
+            /* ─── COMPETITIVE BLOCK: Separator ─── */
+            --comp-sep-width: 100%;
+            --comp-sep-height: 3px;
+            --comp-sep-color: rgba(255, 255, 255, 0.115);
+            --comp-sep-glow-color: rgb(255, 255, 255);
+            --comp-sep-margin: 8px 0;
+            --comp-sep-border-radius: 0px;
+
+            /* ─── COMPETITIVE BLOCK: Body Text ─── */
+            --comp-body-font: 'plane.ttf';
+            --comp-body-size: 15px;
+            --comp-body-color: rgba(255, 255, 255, 0.82);
+            --comp-body-line-height: 1.85;
+            --comp-body-spacing: 0.4px;
+            --comp-body-paragraph-gap: 14px;
+
+            /* ─── COMPETITIVE BLOCK: Background Layer ─── */
+            --comp-bg-media-opacity: 0.6;
+            --comp-bg-media-fit: cover;
+            /* Options: cover, contain, fill */
+            --comp-bg-media-position: center;
+            --comp-bg-overlay: rgba(0, 0, 0, 0);
+            /* Optional: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%) */
+
+            /* ─── COMPETITIVE BLOCK: Rank Badges ─── */
+            --comp-rank-font: var(--bio-font, 'Space Mono', monospace);
+            --comp-rank-size: 11px;
+            --comp-rank-color: rgba(255, 255, 255, 0.75);
+            --comp-rank-bg: rgba(255, 255, 255, 0.06);
+            --comp-rank-border: 1px solid rgba(255, 255, 255, 0.18);
+            --comp-rank-radius: 4px;
+            --comp-rank-padding: 4px 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Unbounded.ttf', monospace;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* ─── Dynamic Background Layer ─── */
+        #media-background {
+            position: fixed;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            /* Bleed edges for parallax */
+            z-index: -2;
+            background: #000;
+            pointer-events: none;
+            transition: transform 0.1s ease-out;
+            /* Smooth parallax */
+        }
+
+        #media-background video,
+        #media-background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            /* Fade in via JS */
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        #media-background video.loaded,
+        #media-background img.loaded {
+            opacity: 1;
+        }
+
+        #media-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+            pointer-events: none;
+        }
+
+
+        :root {
+            /* ─── MUSIC PLAYER: Position & Layout ─── */
+            --mp-top: 16px;
+            --mp-right: 16px;
+            --mp-bottom: auto;
+            --mp-left: auto;
+            --mp-width: auto;
+            --mp-padding: 10px;
+            --mp-gap: 12px;
+            --mp-border-radius: 14px;
+            --mp-background: rgba(0, 0, 0, 0.55);
+            --mp-border: 1px solid rgba(255, 255, 255, 0.08);
+            --mp-backdrop-blur: blur(16px);
+            --mp-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --mp-scale: 1;
+            --mp-opacity-idle: 0.35;
+
+            /* ─── MUSIC PLAYER: Album Art ─── */
+            --mp-art-size: 48px;
+            --mp-art-radius: 10px;
+            /* Use 50% for circle */
+            --mp-art-glow: 0 0 12px rgba(255, 255, 255, 0.1);
+
+            /* ─── MUSIC PLAYER: Song Title ─── */
+            --mp-title-font: 'Space Mono', monospace;
+            --mp-title-size: 12px;
+            --mp-title-weight: 700;
+            --mp-title-color: #fff;
+            --mp-title-spacing: 0.3px;
+
+            /* ─── MUSIC PLAYER: Artist ─── */
+            --mp-artist-font: 'Space Mono', monospace;
+            --mp-artist-size: 10px;
+            --mp-artist-weight: 400;
+            --mp-artist-color: rgba(255, 255, 255, 0.5);
+
+            /* ─── MUSIC PLAYER: Progress Bar ─── */
+            --mp-progress-height: 3px;
+            --mp-progress-bg: rgba(255, 255, 255, 0.1);
+            --mp-progress-fill: rgb(255, 255, 255);
+            --mp-progress-radius: 2px;
+
+            /* ─── MUSIC PLAYER: Time Text ─── */
+            --mp-time-font: 'Space Mono', monospace;
+            --mp-time-size: 9px;
+            --mp-time-color: rgba(255, 255, 255, 0.35);
+
+            /* ─── MUSIC PLAYER: Play Button ─── */
+            --mp-btn-size: 32px;
+            --mp-btn-bg: rgba(255, 255, 255, 0.12);
+            --mp-btn-bg-hover: rgba(255, 255, 255, 0.25);
+            --mp-btn-color: #fff;
+            --mp-btn-font-size: 13px;
+        }
+
+        #music-player {
+            position: fixed;
+            top: var(--mp-top);
+            right: var(--mp-right);
+            bottom: var(--mp-bottom);
+            left: var(--mp-left);
+            z-index: 9000;
+            display: flex;
+            align-items: center;
+            gap: var(--mp-gap);
+            background: var(--mp-background);
+            backdrop-filter: var(--mp-backdrop-blur);
+            -webkit-backdrop-filter: var(--mp-backdrop-blur);
+            border: var(--mp-border);
+            border-radius: var(--mp-border-radius);
+            padding: var(--mp-padding);
+            box-shadow: var(--mp-shadow);
+            width: var(--mp-width);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px) scale(var(--mp-scale));
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        #music-player.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0) scale(var(--mp-scale));
+        }
+
+        #music-player.idle {
+            opacity: var(--mp-opacity-idle);
+        }
+
+        #music-player:hover {
+            opacity: 1 !important;
+        }
+
+        /* ─── Album Artwork ─── */
+        .mp-artwork {
+            width: var(--mp-art-size);
+            height: var(--mp-art-size);
+            border-radius: var(--mp-art-radius);
+            object-fit: cover;
+            flex-shrink: 0;
+            box-shadow: var(--mp-art-glow);
+            transition: box-shadow 0.3s ease;
+        }
+
+        #music-player:hover .mp-artwork {
+            box-shadow: 0 0 18px rgba(255, 255, 255, 0.2);
+        }
+
+        /* ─── Track Details Column ─── */
+        .mp-details {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 100px;
+            max-width: 180px;
+            overflow: hidden;
+        }
+
+        #track-name {
+            font-family: var(--mp-title-font);
+            font-size: var(--mp-title-size);
+            font-weight: var(--mp-title-weight);
+            color: var(--mp-title-color);
+            letter-spacing: var(--mp-title-spacing);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #track-artist {
+            font-family: var(--mp-artist-font);
+            font-size: var(--mp-artist-size);
+            font-weight: var(--mp-artist-weight);
+            color: var(--mp-artist-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ─── Progress Bar ─── */
+        .mp-progress-wrapper {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+        }
+
+        .mp-progress-bar {
+            flex: 1;
+            height: var(--mp-progress-height);
+            background: var(--mp-progress-bg);
+            border-radius: var(--mp-progress-radius);
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .mp-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--mp-progress-fill);
+            border-radius: inherit;
+            transition: width 0.3s linear;
+        }
+
+        .mp-time {
+            font-family: var(--mp-time-font);
+            font-size: var(--mp-time-size);
+            color: var(--mp-time-color);
+            white-space: nowrap;
+            min-width: 32px;
+            text-align: right;
+        }
+
+        /* ─── Play/Pause Button ─── */
+        #play-pause-btn {
+            width: var(--mp-btn-size);
+            height: var(--mp-btn-size);
+            border-radius: 50%;
+            background: var(--mp-btn-bg);
+            border: none;
+            color: var(--mp-btn-color);
+            font-size: var(--mp-btn-font-size);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        #play-pause-btn:hover {
+            background: var(--mp-btn-bg-hover);
+            transform: scale(1.1);
+        }
+
+        /* ─── EQ Bars ─── */
+        .eq-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 16px;
+        }
+
+        .eq-bar {
+            width: 3px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.7);
+            height: 4px;
+        }
+
+        .eq-bars.playing .eq-bar:nth-child(1) {
+            animation: eqB1 0.6s ease-in-out infinite alternate;
+        }
+
+        .eq-bars.playing .eq-bar:nth-child(2) {
+            animation: eqB2 0.5s ease-in-out infinite alternate;
+        }
+
+        .eq-bars.playing .eq-bar:nth-child(3) {
+            animation: eqB3 0.7s ease-in-out infinite alternate;
+        }
+
+        .eq-bars.playing .eq-bar:nth-child(4) {
+            animation: eqB4 0.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes eqB1 {
+            from {
+                height: 3px;
+            }
+
+            to {
+                height: 14px;
+            }
+        }
+
+        @keyframes eqB2 {
+            from {
+                height: 6px;
+            }
+
+            to {
+                height: 10px;
+            }
+        }
+
+        @keyframes eqB3 {
+            from {
+                height: 2px;
+            }
+
+            to {
+                height: 16px;
+            }
+        }
+
+        @keyframes eqB4 {
+            from {
+                height: 8px;
+            }
+
+            to {
+                height: 6px;
+            }
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .reveal-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.2s ease-in-out, visibility 0.8s ease-in-out;
+        }
+
+        .reveal-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .reveal-text {
+            font-family: 'OctoberCrow';
+            font-size: 32px;
+            color: #fff;
+            letter-spacing: 4px;
+            animation: pulse-text 1s infinite ease-in-out;
+            user-select: none;
+        }
+
+        @keyframes pulse-text {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(0.95);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.0);
+            }
+        }
+
+        .content-hidden {
+            transform: scale(0.95);
+            opacity: 0.7;
+            filter: blur(4px);
+            pointer-events: none;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+                opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+                filter 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .content-revealed {
+            transform: scale(1);
+            opacity: 1;
+            filter: blur(0);
+            pointer-events: auto;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+                opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+                filter 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        #profile-block {
+            position: relative;
+            top: 250px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 820px;
+            max-width: 1700px;
+            min-height: 200px;
+            background: rgba(0, 0, 0, 0);
+            border: 0px solid rgba(0, 0, 0, 0);
+            padding: 20px;
+            border-radius: 0px;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+            opacity: 1;
+            transform-style: preserve-3d;
+            pointer-events: auto;
+            overflow: hidden;
+            /* Contains the internal background layer */
+        }
+
+        /* ─── Profile Block Background System ─── */
+        .block-bg-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            border-radius: inherit;
+            /* Matches profile-block border-radius if changed */
+            pointer-events: none;
+        }
+
+        .block-bg-media {
+            width: 100%;
+            height: 100%;
+            /* Adjustments for the user: */
+            object-fit: cover;
+            /* Options: cover, contain, fill */
+            object-position: center;
+            /* Options: center, top, bottom, left, right */
+            opacity: 0.6;
+            /* Video/Image opacity: 0 to 1 */
+            pointer-events: none;
+        }
+
+        .block-bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Adjustment for the user: color and opacity */
+            background: rgba(0, 0, 0, 0);
+            /* Optional: background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%); */
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .profile-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+
+
+        .profile-picture {
+            position: relative;
+            z-index: 10;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: box-shadow 0.4s ease;
+            box-shadow: 0 0 0 2px #ffffff00;
+            /* default offline */
+        }
+
+        .profile-picture.online {
+            box-shadow: 0 0 0 1px #23A55A, 0 0 15px rgba(35, 165, 90, 0.6);
+        }
+
+        .profile-picture.idle {
+            box-shadow: 0 0 0 1px #F0B232, 0 0 15px rgba(240, 178, 50, 0.6);
+        }
+
+        .profile-picture.dnd {
+            box-shadow: 0 0 0 1px #ff0c0c, 0 0 15px rgba(255, 15, 15, 0.6);
+        }
+
+        .profile-picture.offline {
+            box-shadow: 0 0 0 1px #80848E;
+        }
+
+        /* ─── Heartbeat Pulse Animation Overlay ─── */
+        /* Acts as a non-destructive visual enhancement layer */
+        .profile-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            z-index: 1;
+            /* Render behind the profile-picture */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.09s ease, box-shadow 0.09s ease, border 0.09s ease;
+        }
+
+        /* Online Pulse: Energetic, slightly stronger */
+        .profile-container.online::before {
+            box-shadow: 0 0 0 4px #23A55A, 0 0 20px rgba(35, 165, 90, 0.6);
+            opacity: 1;
+            animation: pulse-online 4s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
+        }
+
+        @keyframes pulse-online {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 0.05;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Idle Pulse: Slower, softer */
+        .profile-container.idle::before {
+            box-shadow: 0 0 0 3px #F0B232, 0 0 15px rgba(240, 178, 50, 0.5);
+            opacity: 1;
+            animation: pulse-idle 6s ease-in-out infinite;
+        }
+
+        @keyframes pulse-idle {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.20);
+                opacity: 0.0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* DND Pulse: Tighter, slightly sharper */
+        .profile-container.dnd::before {
+            box-shadow: 0 0 0 2px #ff2f2f, 0 0 15px rgb(255, 71, 71);
+            opacity: 1;
+            animation: pulse-dnd 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes pulse-dnd {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.02);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.2;
+            }
+        }
+
+        /* Offline Pulse: Very subtle */
+        .profile-container.offline::before {
+            box-shadow: 0 0 0 1px #80848E;
+            opacity: 1;
+            animation: pulse-offline 6s ease-in-out infinite;
+        }
+
+        @keyframes pulse-offline {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.10);
+                opacity: 0.90;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .profile-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .name-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badges-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
+
+        .badge-icon {
+            height: 30px;
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.5) translateY(10px);
+            animation: badge-enter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            z-index: 30;
+            position: relative;
+        }
+
+        @keyframes badge-enter {
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .badge-icon:hover {
+            transform: scale(1.15) translateY(-2px) !important;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+        }
+
+        @font-face {
+            font-family: 'OctoberCrow';
+            src: url('assets/OctoberCrow.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        #profile-name {
+            font-family: 'OctoberCrow', sans-serif;
+            font-size: 40px;
+            font-weight: bold;
+            letter-spacing: 10px;
+            color: #fff;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+        }
+
+
+        .status-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .status-dot.online {
+            background-color: #16ff77;
+            box-shadow: 0 0 8px rgba(35, 251, 125, 0.989);
+        }
+
+        .status-dot.idle {
+            background-color: #F0B232;
+            box-shadow: 0 0 8px rgba(240, 178, 50, 0.6);
+        }
+
+        .status-dot.dnd {
+            background-color: #ff1616;
+            box-shadow: 0 0 8px rgb(255, 57, 61);
+        }
+
+        .status-dot.offline {
+            background-color: #80848E;
+            box-shadow: none;
+        }
+
+        #profile-bio {
+            font-family: ("osaka.ttf");
+            font-size: 20px;
+            font-weight: bold;
+            font-style: var(--bio-style);
+            color: var(--bio-color);
+            letter-spacing: var(--bio-spacing);
+            line-height: 1.6;
+            margin-top: 6px;
+            word-break: break-word;
+            transition: color 0.3s ease, font-size 0.3s ease;
+        }
+
+        .name-separator {
+            width: 100%;
+            height: 1px;
+            background: rgb(255, 255, 255);
+            border-radius: 0px;
+            margin: 8px 0 6px 0;
+        }
+
+        #profile-quote {
+            font-family: var(--quote-font);
+            font-size: var(--quote-size);
+            font-weight: var(--quote-weight);
+            font-style: var(--quote-style);
+            color: var(--quote-color);
+            letter-spacing: var(--quote-spacing);
+            line-height: 1.6;
+            margin-top: 10px;
+            word-break: break-word;
+            transition: color 0.3s ease, font-size 0.3s ease;
+        }
+
+        #profile-quote .tw-cursor {
+            display: inline-block;
+            width: 1px;
+            background: rgb(255, 255, 255);
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            height: 1em;
+            animation: blinkCursor 0.8s step-end infinite;
+        }
+
+        @keyframes blinkCursor {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .bio-separator {
+            position: relative;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.115);
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .bio-separator::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 80%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgb(255, 255, 255), transparent);
+            animation: scanLine 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes scanLine {
+            0% {
+                transform: translateX(-99%);
+            }
+
+            100% {
+                transform: translateX(120%);
+            }
+        }
+
+        .profile-footer {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 4px;
+            gap: 15px;
+            pointer-events: auto;
+        }
+
+        .status-panel {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--bio-font, 'Space Mono', monospace);
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            pointer-events: auto;
+        }
+
+        .status-label {
+            letter-spacing: 0.5px;
+        }
+
+        .status-separator {
+            opacity: 0.4;
+            font-size: 16px;
+            transition: text-shadow 0.3s ease;
+        }
+
+        /* Optional: Pulse separator when online/playing */
+        .status-panel:hover .status-separator {
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+        }
+
+        #discord-status-text {
+            font-weight: bold;
+            transition: color 0.4s ease, opacity 0.4s ease, text-shadow 0.4s ease;
+        }
+
+        #discord-status-text.online {
+            color: #23A55A;
+            text-shadow: 0 0 10px rgba(35, 165, 90, 0.4);
+        }
+
+        #discord-status-text.idle {
+            color: #F0B232;
+            text-shadow: 0 0 10px rgba(240, 178, 50, 0.4);
+        }
+
+        #discord-status-text.dnd {
+            color: #ff1616;
+            text-shadow: 0 0 10px rgba(255, 22, 22, 0.4);
+        }
+
+        #discord-status-text.offline {
+            color: #80848E;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 0;
+            pointer-events: auto;
+        }
+
+        .social-icon {
+            width: 55px;
+            height: 55px;
+            min-width: 28px;
+            min-height: 28px;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+            pointer-events: auto;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.2) translateY(-2px);
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+        }
+
+        .glitch {
+            animation: glitch 0.9s ease-in-out;
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        @keyframes orbit {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fast-orbit {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .profile-container.orbit {
+            animation: orbit 8s linear infinite;
+        }
+
+        .profile-container.fast-orbit {
+            animation: fast-orbit 0.8s linear infinite;
+        }
+
+        @media (max-width: 430px) {
+            #profile-block {
+                width: 90vw;
+                max-width: 350px;
+                min-height: 280px;
+                padding: 15px;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .profile-container,
+            .profile-picture {
+                width: 120px;
+                height: 120px;
+            }
+
+            .profile-info {
+                align-items: center;
+                text-align: center;
+            }
+
+            .name-and-badges {
+                flex-direction: column;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .badges-container {
+                justify-content: center;
+            }
+
+            #profile-name {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+
+            #profile-bio {
+                font-size: 14px;
+            }
+
+            .social-icon {
+                width: 28px;
+                height: 28px;
+                min-width: 28px;
+                min-height: 28px;
+            }
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        /* ─── Mouse Trail Effect ─── */
+        #mouse-trail {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* ─── Navigation Row (buttons only) ─── */
+        #profile-nav {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: -4 4px;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.65);
+            font-family: var(--bio-font, 'Space Mono', monospace);
+            font-size: 12px;
+            letter-spacing: 1px;
+            padding: 5px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease,
+                border-color 0.2s ease, box-shadow 0.2s ease;
+            pointer-events: auto;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .nav-btn.active {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.12);
+        }
+
+        /* ─── Sliding Pages System (3 pages) ─── */
+        .pages-viewport {
+            overflow: hidden;
+            width: 100%;
+            position: relative;
+        }
+
+        .pages-track {
+            display: flex;
+            width: 300%;
+            transition: transform 0.65s cubic-bezier(0.77, 0, 0.175, 1);
+            will-change: transform;
+        }
+
+        .pages-track.page-0 {
+            transform: translateX(0%);
+        }
+
+        .pages-track.page-1 {
+            transform: translateX(-33.333%);
+        }
+
+        .pages-track.page-2 {
+            transform: translateX(-66.666%);
+        }
+
+        /* Legacy compat */
+        .pages-track.slide-right {
+            transform: translateX(0%);
+        }
+
+        .pages-track.slide-left {
+            transform: translateX(-33.333%);
+        }
+
+        .page-slide {
+            height: 100%;
+            width: 33.333%;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        /* ─── Competitive Block (Profile-Box Style) ─── */
+        #competitive-block {
+            position: relative;
+            top: var(--comp-block-top);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: var(--comp-block-width);
+            max-width: var(--comp-block-max-width);
+            min-height: var(--comp-block-min-height);
+            max-height: var(--comp-block-max-height);
+            background: var(--comp-block-background);
+            border: var(--comp-block-border);
+            padding: var(--comp-block-padding);
+            border-radius: var(--comp-block-border-radius);
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: var(--comp-block-gap);
+            backdrop-filter: var(--comp-block-backdrop-blur);
+            opacity: var(--comp-block-opacity);
+            pointer-events: auto;
+            overflow: hidden;
+            /* Contains internal background layer */
+        }
+
+        /* ─── Competitive Block: Background System ─── */
+        .comp-bg-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .comp-bg-media {
+            width: 100%;
+            height: 100%;
+            object-fit: var(--comp-bg-media-fit);
+            object-position: var(--comp-bg-media-position);
+            opacity: var(--comp-bg-media-opacity);
+            pointer-events: none;
+        }
+
+        .comp-bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--comp-bg-overlay);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ─── Competitive Block: Header ─── */
+        .comp-header {
+            flex-shrink: 0;
+            z-index: 2;
+            max-width: 100%;
+            padding: 0 4px;
+            /* Prevents text from touching block edges */
+        }
+
+        .competitive-title {
+            position: relative;
+            top: 10px;
+            font-family: var(--comp-header-font);
+            font-size: var(--comp-header-size);
+            font-weight: var(--comp-header-weight);
+            letter-spacing: var(--comp-header-spacing);
+            color: var(--comp-header-color);
+            filter: var(--comp-header-glow);
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            line-height: 1.2;
+        }
+
+        /* ─── Competitive Block: Separator ─── */
+        .comp-separator {
+            position: relative;
+            width: var(--comp-sep-width);
+            height: var(--comp-sep-height);
+            background: var(--comp-sep-color);
+            border-radius: var(--comp-sep-border-radius);
+            margin: var(--comp-sep-margin);
+            flex-shrink: 0;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .comp-separator::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 80%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--comp-sep-glow-color), transparent);
+            animation: scanLine 2s ease-in-out infinite alternate;
+        }
+
+        /* ─── Competitive Block: Scrollable Content ─── */
+        .comp-content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 4px;
+            z-index: 2;
+            /* Styled scrollbar — Firefox */
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.616) transparent;
+        }
+
+        /* Styled scrollbar — Webkit */
+        .comp-content-scroll::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .comp-content-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .comp-content-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+        }
+
+        .comp-content-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* ─── Competitive Block: Body Text ─── */
+        .competitive-body {
+            font-family: 'plane';
+            font-size: 10px;
+            color: white;
+            line-height: var(--comp-body-line-height);
+            letter-spacing: var(--comp-body-spacing);
+            word-break: break-word;
+            animation: competitive-fade 0.6s ease forwards;
+            background: #00000000;
+        }
+
+        @keyframes competitive-fade {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .competitive-body p+p {
+            margin-top: var(--comp-body-paragraph-gap);
+        }
+
+        /* ─── Competitive Block: Rank Badges ─── */
+        .competitive-ranks {
+            padding-top: 10px;
+            padding-bottom: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 2px;
+            margin-bottom: 20px;
+            z-index: 2;
+        }
+
+        .rank-badge {
+            font-family: 'Arial';
+            font-weight: bold;
+            font-size: var(--comp-rank-size);
+            padding: var(--comp-rank-padding);
+            border-radius: var(--comp-rank-radius);
+            border: var(--comp-rank-border);
+            background: rgba(0, 0, 0, 0.496);
+            color: var(--comp-rank-color);
+            letter-spacing: 0.5px;
+            transition: background 0.2s, color 0.2s;
+            padding-bottom: 4px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* Subtle arrow indicator for linked badges */
+        .rank-badge::after {
+            content: '↗';
+            font-size: 9px;
+            opacity: 0.35;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            display: inline-block;
+            line-height: 1;
+        }
+
+        .rank-badge:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+        }
+
+        .rank-badge:hover::after {
+            opacity: 0.85;
+            transform: translate(1px, -1px);
+        }
+
+        /* ─── Competitive Block: Responsive ─── */
+        @media (max-width: 430px) {
+            #competitive-block {
+                width: 90vw;
+                max-width: 350px;
+                padding: 15px;
+            }
+
+            .competitive-title {
+                font-size: 22px;
+                letter-spacing: 2px;
+            }
+
+            .competitive-body {
+                font-size: 13px;
+            }
+
+            .rank-badge {
+                font-size: 10px;
+                padding: 3px 8px;
+            }
+        }
+
+        /* ─── Transform Groups System ─── */
+        .group-wrapper {
+            position: relative;
+            /* Allows independent scaling and moving, e.g. transform: scale(1.1) translate(10px, -5px); */
+            transform-origin: center center;
+            z-index: inherit;
+        }
+
+        /* Specific group targeting, e.g. .group-profile-block { transform: scale(0.9); } */
+        .group-profile-block {
+            /* transform: translate(0, 0) scale(1); */
+        }
+
+        .group-nav-buttons {
+            /* transform: translate(0, 0) scale(1); */
+        }
+
+        .group-competitive-block {
+            /* transform: translate(0, 0) scale(1); */
+        }
+
+        .group-heritage-block {
+            /* transform: translate(0, 0) scale(1); */
+        }
+
+        .group-music-player {
+            /* transform: translate(0, 0) scale(1); */
+        }
+
+        /* ─────────────────────────────────────────────────── */
+        /* ─── HERITAGE PAGE (Page 2)            ─── */
+        /* ─────────────────────────────────────────────────── */
+        :root {
+            /* ─── HERITAGE BLOCK: Layout ─── */
+            --hrt-block-width: 820px;
+            --hrt-block-max-width: 2000px;
+            --hrt-block-min-height: 200px;
+            --hrt-block-max-height: 950px;
+            --hrt-block-padding: 28px 24px;
+            --hrt-block-border-radius: 0px;
+            --hrt-block-gap: 14px;
+            --hrt-block-background: rgba(0, 0, 0, 0);
+            --hrt-block-border: 0px solid rgba(0, 0, 0, 0);
+            --hrt-block-backdrop-blur: blur(0px);
+            --hrt-block-opacity: 1;
+            --hrt-block-top: 250px;
+
+            /* ─── HERITAGE: Background Layer ─── */
+            --hrt-bg-media-opacity: 1;
+            /* 100% opacity, completely covers back video */
+            --hrt-bg-media-fit: cover;
+            /* Cover without distortion */
+            --hrt-bg-media-position: center;
+            --hrt-bg-overlay: rgba(0, 0, 0, 0);
+            /* Optional color overlay, fully adjustable */
+            --hrt-bg-overlay-blur: blur(0px);
+            --hrt-bg-duration: 1.05s;
+            /* Adjustable sliding speed */
+            --hrt-bg-easing: cubic-bezier(0.25, 1, 0.5, 1);
+            --hrt-bg-slide-origin: 50vw;
+            /* 100vw = Right to Left */
+
+            --hrt-content-fade-duration: 1.5s;
+            --hrt-content-fade-delay: 0.35s;
+
+            /* ─── HERITAGE: Flag Image ─── */
+            --hrt-flag-width: 250px;
+            --hrt-flag-max-width: 500px;
+            --hrt-flag-height: 150px;
+            --hrt-flag-border-radius: 6px;
+            --hrt-flag-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+            --hrt-flag-border: 2px solid rgba(255, 255, 255, 0.1);
+            --hrt-flag-scale: 1;
+            --hrt-flag-translate-x: 0px;
+            --hrt-flag-translate-y: 0px;
+
+            /* ─── HERITAGE: Expand Bar ─── */
+            --hrt-bar-bg: rgba(255, 255, 255, 0.06);
+            --hrt-bar-bg-hover: rgba(255, 255, 255, 0.12);
+            --hrt-bar-border: 1px solid rgba(255, 255, 255, 0.12);
+            --hrt-bar-radius: 8px;
+            --hrt-bar-padding: 10px 18px;
+            --hrt-bar-font: 'plane.ttf';
+            --hrt-bar-font-size: 12px;
+            --hrt-bar-color: rgba(255, 255, 255, 0.7);
+            --hrt-bar-spacing: 1.5px;
+
+            /* ─── HERITAGE: Expanded Text ─── */
+            --hrt-text-font: 'plane.ttf';
+            --hrt-text-size: 12px;
+            --hrt-text-color: rgba(255, 255, 255, 0.78);
+            --hrt-text-line-height: 1;
+            --hrt-text-spacing: 0.1px;
+            --hrt-text-paragraph-gap: 16px;
+            --hrt-text-max-height: 320px;
+        }
+
+        /* ─── Heritage Block Container ─── */
+        #heritage-block {
+            position: relative;
+            top: var(--hrt-block-top);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: var(--hrt-block-width);
+            max-width: var(--hrt-block-max-width);
+            min-height: var(--hrt-block-min-height);
+            max-height: var(--hrt-block-max-height);
+            background: var(--hrt-block-background);
+            border: var(--hrt-block-border);
+            padding: var(--hrt-block-padding);
+            border-radius: var(--hrt-block-border-radius);
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--hrt-block-gap);
+            backdrop-filter: var(--hrt-block-backdrop-blur);
+            opacity: var(--hrt-block-opacity);
+            pointer-events: auto;
+            overflow: hidden;
+        }
+
+        /* ─── Heritage: Global Background System ─── */
+        #heritage-global-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0;
+            /* Starts faded out */
+            transform: translateX(var(--hrt-bg-slide-origin));
+            transition: transform var(--hrt-bg-duration) var(--hrt-bg-easing),
+                opacity var(--hrt-bg-duration) ease-in-out;
+        }
+
+        #heritage-global-bg.active {
+            opacity: 1;
+            /* Fades in combined with slide */
+            transform: translateX(0);
+        }
+
+        .hbg-media {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: var(--hrt-bg-media-fit);
+            object-position: var(--hrt-bg-media-position);
+            opacity: var(--hrt-bg-media-opacity);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .hbg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--hrt-bg-overlay);
+            backdrop-filter: var(--hrt-bg-overlay-blur);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ─── Heritage: Scrollable Inner ─── */
+        .hrt-content-scroll {
+            flex: 1;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 4px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--hrt-block-gap);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+        }
+
+        .hrt-content-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .hrt-content-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .hrt-content-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+        }
+
+        .hrt-content-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* ─── Heritage: Flag Image ─── */
+        .hrt-flag {
+            width: var(--hrt-flag-width);
+            max-width: var(--hrt-flag-max-width);
+            height: var(--hrt-flag-height);
+            border-radius: var(--hrt-flag-border-radius);
+            box-shadow: var(--hrt-flag-shadow);
+            border: 5px solid rgb(0, 0, 0);
+            object-fit: cover;
+            transform: translate(var(--hrt-flag-translate-x), var(--hrt-flag-translate-y)) scale(var(--hrt-flag-scale));
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+                max-height 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+                margin 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+                padding 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s ease;
+            z-index: 2;
+            flex-shrink: 0;
+            max-height: 600px;
+            /* Enough for any flag; collapses to 0 when hidden */
+            opacity: 0.5;
+            overflow: hidden;
+        }
+
+        .hrt-flag:hover {
+            box-shadow: 0 6px 30px rgba(255, 255, 255, 0.15);
+        }
+
+        /* Flag hidden state (when reading mode is active) */
+        .hrt-content-scroll.hrt-reading .hrt-flag {
+            opacity: 0;
+            max-height: 0;
+            margin: 0;
+            padding: 0;
+            border-width: 0;
+            transform: translateY(-10px) scale(0.95);
+            pointer-events: none;
+        }
+
+        /* ─── Heritage: Expand Bar ─── */
+        .hrt-expand-bar {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--hrt-bar-bg);
+            border: var(--hrt-bar-border);
+            border-radius: var(--hrt-bar-radius);
+            padding: var(--hrt-bar-padding);
+            font-family: var(--hrt-bar-font);
+            font-size: var(--hrt-bar-font-size);
+            color: var(--hrt-bar-color);
+            letter-spacing: var(--hrt-bar-spacing);
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+            user-select: none;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+
+        .hrt-expand-bar:hover {
+            background: var(--hrt-bar-bg-hover);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.06);
+        }
+
+        .hrt-expand-bar .hrt-arrow {
+            display: inline-block;
+            transition: transform 0.3s ease;
+            font-size: 10px;
+        }
+
+        .hrt-expand-bar.expanded .hrt-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* ─── Heritage: Expanded Text Content ─── */
+        .hrt-text-panel {
+            width: 100%;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+                opacity 0.4s ease,
+                flex 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            z-index: 2;
+        }
+
+        .hrt-text-panel.open {
+            max-height: 2000px;
+            /* Large enough to never clip; actual scrolling is handled by .hrt-text-scroll */
+            opacity: 1;
+            flex: 1;
+            /* Expand to fill the space vacated by the hidden flag */
+        }
+
+        /* Reading mode: center the text panel vertically within the scroll container */
+        .hrt-content-scroll.hrt-reading {
+            justify-content: center;
+        }
+
+        .hrt-content-scroll.hrt-reading .hrt-expand-bar {
+            flex-shrink: 0;
+        }
+
+        .hrt-text-scroll {
+            max-height: var(--hrt-text-max-height);
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 4px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+        }
+
+        .hrt-text-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .hrt-text-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .hrt-text-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+        }
+
+        .hrt-text-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .hrt-text-body {
+            font-family: 'plane.ttf';
+            font-size: 15px;
+            color: white;
+            line-height: 1.8;
+            letter-spacing: 0.7;
+            word-break: break-word;
+        }
+
+        .hrt-text-body p+p {
+            margin-top: var(--hrt-text-paragraph-gap);
+        }
+
+        /* Heritage: Fade-in animation */
+        .hrt-fade-in {
+            opacity: 0;
+        }
+
+        .hrt-fade-active {
+            animation: hrt-fade var(--hrt-content-fade-duration) ease forwards;
+            animation-delay: var(--hrt-content-fade-delay);
+        }
+
+        @keyframes hrt-fade {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Heritage: Responsive */
+        @media (max-width: 430px) {
+            #heritage-block {
+                width: 90vw;
+                max-width: 350px;
+                padding: 15px;
+            }
+
+            .hrt-flag {
+                max-width: 100%;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Retro+Gaming&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+</head>
+
+<body class="home-theme">
+
+    <!-- ─── Dynamic Background Layer ─── -->
+    <div id="media-background"></div>
+    <div id="media-overlay"></div>
+
+    <!-- ─── Heritage Global Background ─── -->
+    <div id="heritage-global-bg">
+        <img class="hbg-media" src="assets/six.png" alt="Heritage Background">
+        <div class="hbg-overlay"></div>
+    </div>
+
+    <audio id="bg-audio" src="assets/flawless.mp3" loop preload="auto"></audio>
+
+    <div class="group-wrapper group-music-player">
+        <div id="music-player">
+            <!-- ─── Album Artwork ─── -->
+            <!-- Change src to your album art image. Use 50% border-radius var for circle. -->
+            <img class="mp-artwork" id="mp-artwork" src="assets/redfangs.gif" alt="Album Art">
+
+            <!-- ─── Track Details ─── -->
+            <div class="mp-details">
+                <div id="track-name">Flawless</div>
+                <div id="track-artist">Yeat</div>
+                <div class="mp-progress-wrapper">
+                    <div class="mp-progress-bar" id="mp-progress-bar">
+                        <div class="mp-progress-fill" id="mp-progress-fill"></div>
+                    </div>
+                    <span class="mp-time" id="mp-time">0:00</span>
+                </div>
+            </div>
+
+            <!-- ─── EQ Bars ─── -->
+            <div class="eq-bars" id="eq-bars">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+
+            <!-- ─── Play/Pause Button ─── -->
+            <button id="play-pause-btn" title="Play / Pause">&#9654;</button>
+        </div>
+    </div>
+
+    <!-- ─── Mouse Trail Canvas ─── -->
+    <canvas id="mouse-trail"></canvas>
+
+    <div id="reveal-screen" class="reveal-screen">
+        <div class="reveal-text">enter</div>
+    </div>
+
+    <div class="container content-hidden" id="main-content">
+
+        <!-- ─── Navigation Buttons (top, independent) ─── -->
+        <div class="group-wrapper group-nav-buttons">
+            <div id="profile-nav">
+                <div class="nav-buttons">
+                    <button class="nav-btn active" id="nav-btn-profile" data-page="0">Profile</button>
+                    <button class="nav-btn" id="nav-btn-competitive" data-page="1">Competitive</button>
+                    <button class="nav-btn" id="nav-btn-heritage" data-page="2">Heritage</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── Sliding Pages Viewport ─── -->
+        <div class="pages-viewport">
+            <div class="pages-track page-0" id="pages-track">
+
+                <!-- Page 0: Main Profile (DO NOT MODIFY) -->
+                <div class="page-slide" id="page-profile">
+                    <div class="group-wrapper group-profile-block">
+                        <div id="profile-block">
+
+                            <!-- ─── Internal Background System ─── -->
+                            <div class="block-bg-wrapper">
+                                <!-- Swap to <img> if you prefer an image: <img class="block-bg-media" src="assets/your-image.png" alt=""> -->
+                                <!-- <video class="block-bg-media" src="assets/your-video.mp4" autoplay loop muted playsinline></video> -->
+                                <div class="block-bg-overlay"></div>
+                            </div>
+
+                            <div class="profile-header">
+                                <div class="profile-container">
+                                    <img src="assets/yeat.gif" alt="Profile" class="profile-picture">
+                                </div>
+                                <div class="profile-info">
+                                    <div class="name-wrapper">
+                                        <div id="profile-name">vsixrx</div>
+                                        <div id="avatar-status" class="status-dot offline"></div>
+                                        <div id="badges-container" class="badges-container"></div>
+                                    </div>
+                                    <div class="name-separator"></div>
+                                    <div id="profile-bio"></div>
+                                    <div id="profile-quote"></div>
+                                </div>
+                            </div>
+                            <div class="bio-separator"></div>
+                            <!-- ─── Status + Socials row inside profile block ─── -->
+                            <div class="profile-footer">
+                                <div class="status-panel">
+                                    <span class="status-label">Currently</span>
+                                    <span class="status-separator">|</span>
+                                    <span id="discord-status-text" class="offline">Offline</span>
+                                </div>
+                                <div class="social-links">
+                                    <a href="vsixrx" target="_blank">
+                                        <img src="assets/Discord.gif" alt="discord" class="social-icon">
+                                    </a>
+                                    <a href="https://steamcommunity.com/id/vsixrx/" target="_blank">
+                                        <img src="assets/steam.gif" alt="steam" class="social-icon">
+                                    </a>
+                                    <a href="https://www.youtube.com/@vsixrx" target="_blank">
+                                        <img src="assets/youtube.gif" alt="youtube" class="social-icon">
+                                    </a>
+                                    <a href="https://www.instagram.com/vsixrx" target="_blank">
+                                        <img src="assets/Instagram.gif" alt="instagram" class="social-icon">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page 1: Competitive -->
+                <div class="page-slide" id="page-competitive">
+                    <div class="group-wrapper group-competitive-block">
+                        <div id="competitive-block">
+
+                            <!-- ─── Internal Background System (same as profile block) ─── -->
+                            <div class="comp-bg-wrapper">
+                                <!-- Swap to <img> if you prefer an image: <img class="comp-bg-media" src="assets/your-image.png" alt=""> -->
+                                <!-- <video class="comp-bg-media" src="assets/your-video.mp4" autoplay loop muted playsinline></video> -->
+                                <div class="comp-bg-overlay"></div>
+                            </div>
+
+                            <!-- ─── Header ─── -->
+                            <div class="comp-header">
+                                <div class="competitive-title">Competitive</div>
+                            </div>
+
+                            <!-- ─── Separator (animated scanline, same style as profile bio-separator) ─── -->
+                            <div class="comp-separator"></div>
+
+                            <!-- ─── Scrollable Content Area ─── -->
+                            <div class="comp-content-scroll">
+
+                                <div class="competitive-ranks">
+                                    <!-- Each badge is a link: change href to your URL, or set href="#" to disable -->
+                                    <a href="https://apexlegends.com" target="_blank" rel="noopener"
+                                        class="rank-badge">Apex Legends — Masters</a>
+                                    <a href="https://playvalorant.com" target="_blank" rel="noopener"
+                                        class="rank-badge">Valorant — Diamond</a>
+                                    <a href="https://fortnite.com" target="_blank" rel="noopener"
+                                        class="rank-badge">Fortnite — Unreal</a>
+                                    <a href="https://ubisoft.com/r6" target="_blank" rel="noopener"
+                                        class="rank-badge">R6 Siege — Diamond</a>
+                                </div>
+
+                                <div class="competitive-body">
+                                    <p>A competitive FPS player who consistently performs above the average across a
+                                        wide
+                                        range
+                                        of titles. Has reached Masters in Apex Legends, Diamond in Valorant, Unreal in
+                                        Fortnite,
+                                        and Diamond in Rainbow Six Siege, reflecting a high level of performance across
+                                        different competitive systems and metas.</p>
+                                    <p>Demonstrates strong mechanical precision with controlled aim, fast reaction time,
+                                        and
+                                        the
+                                        ability to maintain accuracy under pressure. Decision making remains composed
+                                        and
+                                        efficient, allowing for quick reads on opponents and situations without
+                                        unnecessary
+                                        hesitation.</p>
+                                    <p>Adapts quickly to varying game mechanics and pacing while maintaining consistent
+                                        performance. Shows strong positioning and awareness, using map knowledge and
+                                        timing
+                                        to
+                                        create advantages rather than relying purely on mechanical skill. Game sense is
+                                        well
+                                        developed, with a clear understanding of rotations, engagements, and risk
+                                        management.
+                                    </p>
+                                    <p>Overall performance reflects a combination of technical skill, consistency, and
+                                        discipline, with a clear focus on improvement and reliable execution across
+                                        competitive
+                                        environments.</p>
+                                    <p>Adaptation, introspection, pattern recognition, and metafunction form the core of
+                                        high-level competitive gaming, shaping not only how a player reacts in the
+                                        moment
+                                        but
+                                        also how they develop over time. Adaptation allows a player to respond quickly
+                                        to
+                                        shifting in-game circumstances, opponent strategies, and evolving metas. It is
+                                        not
+                                        just
+                                        about reflexes or mechanical skill, but about anticipating changes, adjusting
+                                        tactics,
+                                        and remaining flexible under pressure.</p>
+                                    <p>Introspection complements adaptation by enabling a player to critically analyze
+                                        past
+                                        performances, identify mistakes, and refine strategies. This self-evaluation is
+                                        systematic, breaking down both successes and failures to improve decision
+                                        making,
+                                        positioning, and execution in future matches. Pattern recognition extends this
+                                        cognitive
+                                        toolkit by allowing players to detect recurring behaviors in opponents, common
+                                        sequences
+                                        in maps, or subtle cues that indicate an opportunity or threat. Over time, this
+                                        creates
+                                        predictive insight that can be leveraged to control engagements and gain
+                                        strategic
+                                        advantages..</p>
+                                    <p>Metafunction, in this context, refers to the player's ability to understand and
+                                        manipulate the underlying rules, systems, and dynamics of the game itself. It
+                                        goes
+                                        beyond
+                                        simple strategy, involving an awareness of how the game works at a fundamental
+                                        level—how
+                                        mechanics interact, how balance shifts, and how the environment can be used to
+                                        create
+                                        advantages. This understanding allows a player to not only play the game but to
+                                        shape
+                                        their approach in ways that exploit its core systems, creating opportunities
+                                        that
+                                        opponents may not recognize.</p>
+                                    <p>In competitive gaming, the combination of these cognitive processes is often the
+                                        defining
+                                        factor between above-average play and elite performance, allowing a player to
+                                        maintain
+                                        consistency, anticipate challenges, and evolve alongside the game itself.</p>
+                                </div>
+
+                            </div><!-- end .comp-content-scroll -->
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page 2: Heritage -->
+                <div class="page-slide" id="page-heritage">
+
+                    <div class="group-wrapper group-heritage-block">
+                        <div id="heritage-block">
+
+                            <!-- ─── Scrollable Inner Content ─── -->
+                            <div class="hrt-content-scroll">
+
+                                <!-- ─── Flag Image ─── -->
+                                <!-- Change src to your flag image from /assets -->
+                                <img class="hrt-flag hrt-fade-in" src="assets/heritage.png" alt="Heritage Flag">
+
+                                <!-- ─── Expand Bar (click to reveal text) ─── -->
+                                <div class="hrt-expand-bar hrt-fade-in" id="hrt-expand-bar">
+                                    <span>Read More</span>
+                                    <span class="hrt-arrow">▼</span>
+                                </div>
+
+                                <!-- ─── Expandable Text Section ─── -->
+                                <div class="hrt-text-panel" id="hrt-text-panel">
+                                    <div class="hrt-text-scroll">
+                                        <div class="hrt-text-body">
+                                            <p>Armenian Kurds are a historically rooted ethnic minority in Armenia, with
+                                                a presence that dates back many centuries. Kurdish tribes moved into the
+                                                South Caucasus region during the periods of the Ottoman Empire and the
+                                                Safavid Empire, when shifting borders, wars, and tribal migrations
+                                                brought Kurdish populations into areas that are now part of modern
+                                                Armenia. Over time, these communities settled primarily in rural and
+                                                mountainous regions, maintaining a pastoral lifestyle centered on animal
+                                                herding and agriculture.</p>
+                                            <p>A large majority of Kurds in Armenia today belong to the Yazidi
+                                                community, followers of Yazidism, which distinguishes them from Muslim
+                                                Kurds found in other parts of the Middle East. While Yazidis are
+                                                ethnically Kurdish in language and heritage (many speak Kurmanji
+                                                Kurdish), they strongly identify as a separate religious and cultural
+                                                group. In fact, Yazidis are the largest minority in Armenia, and their
+                                                presence has been especially significant since the early 20th century,
+                                                when many fled persecution and violence in the collapsing Ottoman
+                                                Empire.</p>
+                                            <p>The relationship between Armenians and Kurds has been complex and shaped
+                                                by shared as well as conflicting historical experiences. During the
+                                                Armenian Genocide, carried out by the Ottoman authorities, some Kurdish
+                                                groups participated in attacks against Armenians, often under pressure
+                                                or as part of imperial policies, while other Kurds helped shelter and
+                                                save Armenian lives. These mixed experiences left a complicated legacy,
+                                                but also instances of solidarity that are remembered today.</p>
+                                            <p>During the Soviet period, when Armenia became part of the Soviet Union in
+                                                1922, Kurdish cultural life was officially recognized to some extent.
+                                                Kurdish-language schools, publications, and radio broadcasts were
+                                                supported for a time, although policies shifted over the decades. Some
+                                                Kurds were also deported or resettled during Stalinist campaigns, which
+                                                disrupted communities across the region.</p>
+                                            <p>Since Armenia regained independence in 1991, Kurdish (especially Yazidi)
+                                                communities have been formally recognized as a national minority. They
+                                                have the right to preserve their language, traditions, and religion, and
+                                                there are Yazidi schools, cultural organizations, and media outlets
+                                                operating in the country. One notable symbol of their presence is the
+                                                Yazidi temple in the village of Aknalich, which is the largest Yazidi
+                                                temple in the world and serves as a cultural and religious center.</p>
+                                            <p>Today, Armenian Kurds continue to balance integration into Armenian
+                                                society with the preservation of their distinct identity. While many
+                                                live in rural areas and face economic challenges, they remain an
+                                                important part of Armenia’s multicultural landscape, contributing to its
+                                                diversity through language, music, traditions, and religious life.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div><!-- end .hrt-content-scroll -->
+
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- end .pages-track -->
+        </div><!-- end .pages-viewport -->
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
